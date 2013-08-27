@@ -71,8 +71,7 @@ class Schedule extends AbstractService
      * Iterates each schedule node that overlaps the date
      * range and, forming periods of time inclusive to the
      * start date of the given node and the start date
-     * of the next node.
-     * The schedule projection assigns each given node to
+     * of the next node, assigns each given node to
      * each date it is due for.
      *
      * @param Entity\Schedule $schedule

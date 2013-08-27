@@ -42,8 +42,8 @@ class Job extends AbstractEntity
         return $this;
     }
     
-    public function addRecipients($recipients) {
-        $this->recipients[] = $recipients;
+    public function addRecipient($recipient) {
+        $this->recipients[] = $recipient;
         return $this;
     }
     
