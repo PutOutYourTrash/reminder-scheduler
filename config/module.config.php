@@ -2,7 +2,7 @@
 return array(
     'doctrine' => array(
 		'driver' => array(
-			'application_entities' => array(
+			'poyt_reminder_scheduler_entities' => array(
 				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
 				'cache' => 'array',
 				'paths' => array(
@@ -11,7 +11,7 @@ return array(
 			),
 			'orm_default' => array(
 				'drivers' => array(
-					'POYT\ReminderScheduler\Entity' => 'application_entities'
+					'POYT\ReminderScheduler\Entity' => 'poyt_reminder_scheduler_entities'
 				)
 			)
 		)
