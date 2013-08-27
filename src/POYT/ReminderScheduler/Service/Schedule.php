@@ -16,6 +16,13 @@ class Schedule extends AbstractService
     
     protected $jobService;
     
+    public function getById($id)
+    {
+        $schedule = $this->getRepository()->getOneById($id);
+        
+        return $schedule;
+    }
+    
     public function getNodeForDate(Entity\Schedule $schedule, DateTime $date = null)
     {
         if(!($date instanceof DateTime)) {
