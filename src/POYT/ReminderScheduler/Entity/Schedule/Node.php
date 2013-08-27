@@ -32,6 +32,14 @@ class Node extends AbstractEntity
      */
     protected $startDate;
     
+    /**
+     * Cron format schedule
+     * 
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $schedule;
+    
     public function getId() {
         return $this->id;
     }

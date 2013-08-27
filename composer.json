@@ -1,0 +1,8 @@
+{
+    "require": {
+        "mtdowling/cron-expression": "1.0.x",
+        "zendframework/zendframework": "~2.2.3",
+        "doctrine/doctrine-orm-module": "~0.7.0",
+        "hellogerard/jobby": "v2.0.2"
+    }
+}

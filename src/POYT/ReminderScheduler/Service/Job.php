@@ -2,6 +2,7 @@
 namespace POYT\ReminderScheduler\Service;
 
 use POYT\ReminderScheduler\Entity;
+use POYT\RemidnerScheduler\Controller\CommandableController;
 
 use Jobby;
 
@@ -32,6 +33,11 @@ class Job extends AbstractService
         $data = $hydrator->extract($job);
         
         return $data;
+    }
+    
+    public function createCommand(CommandableController $controller, $arguments)
+    {
+        
     }
     
     public function getJobby() {
