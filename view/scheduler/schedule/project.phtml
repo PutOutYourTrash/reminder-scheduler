@@ -1,0 +1,7 @@
+<?php
+foreach($projection->getDates() as $date) {
+?>
+<?=$date->getDate()->format("D Y-m-d")?>: <?=($node = $date->getNode())?$node->getSchedule()->getName():null?>
+
+<?php
+}

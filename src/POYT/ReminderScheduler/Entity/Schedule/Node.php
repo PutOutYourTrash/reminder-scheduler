@@ -1,6 +1,8 @@
 <?php
 namespace POYT\ReminderScheduler\Entity\Schedule;
 
+use POYT\ReminderScheduler\Entity\Schedule as ScheduleEntity;
+
 use POYT\ReminderScheduler\Entity\AbstractEntity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -21,8 +23,8 @@ class Node extends AbstractEntity
     
     /**
      * @var Schedule
-     * @ORM\OneToOne(targetEntity="POYT\ReminderScheduler\Entity\Schedule", orphanRemoval=true, fetch="EAGER")
-     * @ORM\JoinColumn(name="schedule_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="POYT\ReminderScheduler\Entity\Schedule", inversedBy="nodes", fetch="EAGER")
+     * @ORM\JoinColumn(name="schedule_id", referencedColumnName="id", nullable=false)
      */
     protected $schedule;
     
@@ -38,7 +40,7 @@ class Node extends AbstractEntity
      * @var string
      * @ORM\Column(type="string", length=255)
      */
-    protected $schedule;
+    protected $expression;
     
     public function getId() {
         return $this->id;
@@ -53,7 +55,7 @@ class Node extends AbstractEntity
         return $this->schedule;
     }
     
-    public function setSchedule(Schedule $schedule) {
+    public function setSchedule(ScheduleEntity $schedule) {
         $this->schedule = $schedule;
         return $this;
     }
@@ -64,6 +66,15 @@ class Node extends AbstractEntity
     
     public function setStartDate($startDate) {
         $this->startDate = $startDate;
+        return $this;
+    }
+    
+    public function getExpression() {
+        return $this->expression;
+    }
+    
+    public function setExpression($expression) {
+        $this->expression = $expression;
         return $this;
     }
 }

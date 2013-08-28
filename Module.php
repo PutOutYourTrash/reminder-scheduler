@@ -23,7 +23,7 @@ class Module
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/POYT/' . __NAMESPACE__,
+                    'POYT\ReminderScheduler' => __DIR__ . '/src/POYT/ReminderScheduler',
                 ),
             ),
         );

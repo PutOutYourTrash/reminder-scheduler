@@ -4,6 +4,7 @@ namespace POYT\ReminderScheduler\Entity\Schedule;
 use POYT\ReminderScheduler\Entity\AbstractEntity;
 
 use DateTime;
+use DatePeriod;
 
 class Projection extends AbstractEntity
 {

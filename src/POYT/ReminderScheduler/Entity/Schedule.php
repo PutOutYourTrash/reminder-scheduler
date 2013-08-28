@@ -18,8 +18,14 @@ class Schedule extends AbstractEntity
     protected $id;
     
     /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $name;
+    
+    /**
      * @var array
-     * @ORM\OneToMany(targetEntity="POYT\ReminderScheduler\Entity\Schedule\Node", mappedBy="schedule_id", fetch="EAGER", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="POYT\ReminderScheduler\Entity\Schedule\Node", mappedBy="schedule", fetch="EAGER", orphanRemoval=true)
      * @ORM\OrderBy({"startDate" = "ASC"})
      */
     protected $nodes = array();
@@ -30,6 +36,15 @@ class Schedule extends AbstractEntity
     
     public function setId($id) {
         $this->id = $id;
+        return $this;
+    }
+    
+    public function getName() {
+        return $this->name;
+    }
+    
+    public function setName($name) {
+        $this->name = $name;
         return $this;
     }
     

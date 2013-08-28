@@ -3,13 +3,40 @@ return array(
     'console' => array(
 		'router' => array(
 			'routes' => array(
+			    'schedule-create' => array(
+			        'options' => array(
+			            'route' => 'schedule create <name>',
+						'defaults' => array(
+							'controller' => 'POYT\ReminderScheduler\Controller\Schedule',
+							'action' => 'create',
+						)
+			        )
+			    ),
+			    'schedule-add-node' => array(
+			        'options' => array(
+			            'route' => 'schedule <schedule_id> add node <start_date> <expression>',
+						'defaults' => array(
+							'controller' => 'POYT\ReminderScheduler\Controller\Schedule',
+							'action' => 'addNode'
+						)
+			        )
+			    ),
+			    'schedule-remove-node' => array(
+			        'options' => array(
+			            'route' => 'schedule remove node <node_id>',
+						'defaults' => array(
+							'controller' => 'POYT\ReminderScheduler\Controller\Schedule',
+							'action' => 'removeNode'
+						)
+			        )
+			    ),
 			    'schedule-project' => array(
 			        'options' => array(
-			            'route' => 'schedule project <schedule_id> [<start_date>] [<end_date>]',
+			            'route' => 'schedule <schedule_id> project [<start_date>] [<end_date>]',
 						'defaults' => array(
 							'controller' => 'POYT\ReminderScheduler\Controller\Schedule',
 							'action' => 'project',
-							'start_date' => null,
+							'start_date' => 'first day of this month',
 							'end_date' => null
 						)
 			        )
@@ -43,5 +70,13 @@ return array(
 				)
 			)
 		)
+	),
+	'view_manager' => array(
+		'display_not_found_reason' => true,
+		'display_exceptions'	   => true,
+		'template_map' => array(),
+		'template_path_stack' => array(
+			__DIR__ . '/../view',
+		),
 	),
 );

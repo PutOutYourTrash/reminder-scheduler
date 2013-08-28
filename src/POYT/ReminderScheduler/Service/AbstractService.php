@@ -1,5 +1,5 @@
 <?php
-namespace POYT\ReminderScheduleR\Service;
+namespace POYT\ReminderScheduler\Service;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -7,7 +7,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 use Doctrine\ORM\EntityManager;
 
-abstract class AbstractService
+abstract class AbstractService implements ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
     

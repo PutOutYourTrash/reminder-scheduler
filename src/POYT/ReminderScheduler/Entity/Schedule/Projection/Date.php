@@ -2,13 +2,13 @@
 namespace POYT\ReminderScheduler\Entity\Schedule\Projection;
 
 use POYT\ReminderScheduler\Entity\AbstractEntity;
-use POYT\ReminderSchedular\Entity\Schedule\Node;
+use POYT\ReminderScheduler\Entity\Schedule\Node;
 
 use DateTime;
 
 class Date extends AbstractEntity
 {
-    const INDEX_FORMAT = 'Y:m:d';
+    const INDEX_FORMAT = 'Y-m-d';
 
     protected $date;
     

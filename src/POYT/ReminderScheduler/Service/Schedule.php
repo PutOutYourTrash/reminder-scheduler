@@ -5,6 +5,10 @@ use POYT\ReminderScheduler\Entity;
 
 use Cron\CronExpression;
 use DateTime;
+use DatePeriod;
+use DateInterval;
+
+use Doctrine\Common\Collections;
 
 class Schedule extends AbstractService
 {
@@ -16,11 +20,54 @@ class Schedule extends AbstractService
     
     protected $jobService;
     
-    public function getById($id)
+    public function create($name)
     {
-        $schedule = $this->getRepository()->getOneById($id);
+        $entityManager = $this->getEntityManager();
+        
+        $schedule = new Entity\Schedule;
+        $schedule->setName($name);
+        
+        $entityManager->persist($schedule);
+        $entityManager->flush();
         
         return $schedule;
+    }
+    
+    public function getById($id)
+    {
+        $schedule = $this->getRepository()->findOneById($id);
+        
+        return $schedule;
+    }
+    
+    public function createNode(Entity\Schedule $schedule, DateTime $startDate, $expression)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        $node = new Entity\Schedule\Node;
+        $node->setSchedule($schedule);
+        $node->setStartDate($startDate);
+        $node->setExpression($expression);
+        
+        $entityManager->persist($node);
+        $entityManager->flush();
+        
+        return $node;
+    }
+    
+    public function removeNode(Entity\Schedule\Node $node)
+    {
+        $entityManager = $this->getEntityManager();
+        
+        $entityManager->remove($node);
+        return $entityManager->flush();
+    }
+    
+    public function getNodeById($id)
+    {
+        $node = $this->getNodeRepository()->findOneById($id);
+        
+        return $node;
     }
     
     public function getNodeForDate(Entity\Schedule $schedule, DateTime $date = null)
@@ -29,29 +76,36 @@ class Schedule extends AbstractService
             $date = new DateTime;
         }
         
-        $query = $this->getNodeQueryBuilder()
-            ->field('schedule_id')->equals($schedule->getId())
-            ->field('startDate')->lte($date)
-            ->sort('startDate', 'desc')
-            ->getQuery();
+        $nodes = $schedule->getNodes();
         
-        $node = $query->getSingleResult();
+        $expressionBuilder = new Collections\ExpressionBuilder;
+        $expression = $expressionBuilder->lte('startDate', $date);
+        $criteria = new Collections\Criteria($expression);
+        $criteria->orderBy([
+            'startDate' => 'desc'
+        ]);
+        
+        $node = $nodes->matching($criteria)->first();
         
         return $node;
     }
     
     public function getNodesForRange(Entity\Schedule $schedule, DateTime $startDate, DateTime $endDate)
-    {
-        $startNode = $this->getNodeForDate($schedule, $startDate);
+    {        
+        $nodes = $schedule->getNodes();
         
-        $query = $this->getNodeQueryBuilder()
-            ->field('schedule_id')->equals($schedule->getId())
-            ->field('startDate')->range($startDate, $endDate)
-            ->getQuery();
+        $expressionBuilder = new Collections\ExpressionBuilder;
+        $expression = $expressionBuilder->andX(
+            $expressionBuilder->gte('startDate', $startDate),
+            $expressionBuilder->lte('startDate', $endDate)
+        );
+        $criteria = new Collections\Criteria($expression);
         
-        $nodes = $query->execute();
+        $nodes = $nodes->matching($criteria);
         
-        array_unshift($nodes, $startNode); // Start date is exclusive to range
+        if($startNode = $this->getNodeForDate($schedule, $startDate)) {
+            $nodes->set(-1, $startNode); // Start date is exclusive to range
+        }
         
         return $nodes;
     }
@@ -86,25 +140,25 @@ class Schedule extends AbstractService
      * @param DateTime $endDate
      * @return Schedule\Projection
      */
-    public function projectSchedule(Entity\Schedule $schedule, DateTime $startDate, DateTime $endDate)
+    public function project(Entity\Schedule $schedule, DateTime $startDate, DateTime $endDate)
     {
         $nodes = $this->getNodesForRange($schedule, $startDate, $endDate);
         
-        $projection = new Schedule\Projection;
+        $projection = new Entity\Schedule\Projection;
         $projection->populateDates(new DatePeriod($startDate, new DateInterval('P1D'), $endDate));
         
-        foreach(array_values($nodes) as $node) {
+        foreach(array_values($nodes->toArray()) as $node) {
             $nextNode = next($nodes);
             $periodStart = ($startDate > $node->getStartDate())?$startDate:$node->getStartDate();
             $periodEnd = $nextNode?$nextNode->getStartDate():$endDate;
             
             $period = new DatePeriod($periodStart, new DateInterval('P1D'), $periodEnd);
             
-            $nodeExpression = CronExpression::factory($node->getSchedule());
+            $nodeExpression = CronExpression::factory($node->getExpression());
             
             foreach($period as $periodDate) {
                 $date = $projection->getDate($periodDate);
-                if($nodeExpression->isDue($date->getDate())) {
+                if($date && $nodeExpression->isDue($date->getDate())) {
                     $date->setNode($node);
                 }
             }
@@ -123,11 +177,6 @@ class Schedule extends AbstractService
     public function setNodeRepository($nodeRepository) {
         $this->nodeRepository = $nodeRepository;
         return $this;
-    }
-    
-    public function getNodeQueryBuilder()
-    {
-        return $this->getQueryBuilder(static::$nodeRepositoryName);
     }
     
     public function getJobService() {
